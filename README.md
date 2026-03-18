@@ -19,7 +19,7 @@
 
 | 🟢 Splash Screen | 🏠 Home Screen | ➕ Add Medication |
 |----------------|--------------|------------------|
-| ![Splash Screen](screenshots/splash.jpeg) | ![Home](screenshots/home.jpeg) | ![Add Medication](screenshots/add_medication.jpeg) |
+| ![Splash Screen](screenshots/splash.jpeg) | ![Home](screenshots/home.jpeg) | ![Add Medication](screenshots/add_medicine.jpeg) |
 
 | 📊 Statistics | ℹ️ About |
 |--------------|----------|
