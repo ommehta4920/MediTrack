@@ -1,17 +1,92 @@
-# meditrack
+# 💊 MediTrack
 
-Daily Pill Reminder & Tracker App
+**MediTrack** is a simple and powerful **Daily Medication Reminder & Tracker** app that helps users stay consistent with their medications and maintain a healthy routine.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 📅 Schedule multiple medications
+- ⏰ Set daily reminders at specific times
+- 📊 Track adherence and streaks
+- 📜 View detailed medication history
+- 🎨 Customizable medication types
+- 🔒 Privacy-first (all data stored locally)
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📱 Screenshots
+
+| 🟢 Splash Screen | 🏠 Home Screen | ➕ Add Medication |
+|----------------|--------------|------------------|
+| ![Splash Screen](screenshots/splash.jpeg) | ![Home](screenshots/home.jpeg) | ![Add Medication](screenshots/add_medication.jpeg) |
+
+| 📊 Statistics | ℹ️ About |
+|--------------|----------|
+| ![Statistics](screenshots/stats.jpeg) | ![About](screenshots/about.jpeg) |
+
+---
+
+## 🛠️ Tech Stack
+
+- **Flutter**
+- **Dart**
+- Local Storage (Offline-first)
+- Notifications API
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Flutter SDK installed
+- Android Studio / VS Code
+
+### Installation
+
+```bash
+git clone https://github.com/your-username/meditrack.git
+cd meditrack
+flutter pub get
+flutter run
+```
+
+---
+
+## 📂 Project Structure
+
+```
+lib/
+├── models/
+├── services/
+├── screens/
+├── widgets/
+├── utils/
+```
+
+---
+
+## 🔔 Permissions Used
+
+- Notification Access
+- Exact Alarm Scheduling
+- Boot Completed (for rescheduling reminders)
+
+---
+
+## 🎯 Future Improvements
+
+- ☁️ Cloud sync
+- 👨‍⚕️ Doctor sharing feature
+- 📈 Advanced analytics
+- 🌙 Dark mode
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!  
+Feel free to fork this repo and submit a pull request.
+
+---
