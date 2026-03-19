@@ -30,7 +30,7 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(locationName));
 
     // Android settings - use drawable for small icon
-    const androidSettings = AndroidInitializationSettings('ic_notification');
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
 
     // iOS settings
     const iosSettings = DarwinInitializationSettings(
@@ -58,7 +58,11 @@ class NotificationService {
   }
 
   void _onNotificationTapped(NotificationResponse response) {
-    debugPrint('Notification tapped: ${response.payload}');
+    try {
+      debugPrint('Notification tapped: ${response.payload}');
+    } catch (e) {
+      debugPrint('Tap error: $e');
+    }
   }
 
   Future<bool> requestPermissions() async {
@@ -113,15 +117,15 @@ class NotificationService {
       channelDescription: channelDescription,
       importance: Importance.max,
       priority: Priority.high,
-      icon: 'ic_notification',
+      icon: '@mipmap/ic_launcher',
       color: _notificationColor,
       colorized: true,
       enableVibration: true,
       playSound: true,
-      fullScreenIntent: true,
+      fullScreenIntent: false,
       channelShowBadge: true,
       // Remove large icon - this prevents Flutter icon from showing
-      // largeIcon: const DrawableResourceAndroidBitmap('@drawable/ic_notification_large'),
+      // largeIcon: const DrawableResourceAndroidBitmap('@drawable/@mipmap/ic_launcher'),
     );
   }
 
@@ -166,7 +170,7 @@ class NotificationService {
         channelDescription: 'Notifications for medication reminders',
         importance: Importance.max,
         priority: Priority.high,
-        icon: 'ic_notification',
+        icon: '@mipmap/ic_launcher',
         // largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
         color: _notificationColor,
         colorized: true,
@@ -258,7 +262,7 @@ class NotificationService {
       channelDescription: 'General app notifications',
       importance: Importance.max,
       priority: Priority.high,
-      icon: 'ic_notification',
+      icon: '@mipmap/ic_launcher',
       // largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       color: _notificationColor,
       colorized: true,

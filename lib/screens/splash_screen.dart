@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
+import 'package:permission_handler/permission_handler.dart';
+
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_strings.dart';
+import '../core/services/storage_service.dart';
 import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -14,56 +17,92 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  late AnimationController _controller;
+  late Animation<double> _fade;
+  late Animation<double> _scale;
+
+  bool _dialogShown = false;
 
   @override
   void initState() {
     super.initState();
 
-    // Set status bar color
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-      ),
-    );
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ));
 
-    // Initialize animations
-    _animationController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeIn,
-      ),
+    _fade = Tween(begin: 0.0, end: 1.0).animate(_controller);
+    _scale = Tween(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutBack,
+    _controller.forward();
+
+    _init();
+  }
+
+  Future<void> _init() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    await _checkBatterySettings(); // ✅ waits for user interaction
+
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+    );
+  }
+
+  Future<void> _checkBatterySettings() async {
+    final storage = StorageService();
+
+    // ✅ Show ONLY once
+    if (storage.isBatteryDialogShown()) return;
+
+    if (_dialogShown) return;
+    _dialogShown = true;
+
+    if (!mounted) return;
+
+    await showDialog( // 🔥 IMPORTANT: await here
+      context: context,
+      barrierDismissible: false, // user must choose
+      builder: (_) => AlertDialog(
+        title: const Text("Enable Background Running"),
+        content: const Text(
+          "To ensure reminders work on time, please disable battery optimization and allow background activity.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await storage.setBatteryDialogShown(true);
+              Navigator.pop(context);
+              await openAppSettings();
+            },
+            child: const Text("Open Settings"),
+          ),
+          TextButton(
+            onPressed: () async {
+              await storage.setBatteryDialogShown(true);
+              Navigator.pop(context);
+            },
+            child: const Text("Later"),
+          ),
+        ],
       ),
     );
-
-    // Start animation
-    _animationController.forward();
-
-    // Navigate to home after 3 seconds
-    Timer(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -72,15 +111,11 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       body: Container(
         width: double.infinity,
-        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
+            colors: [AppColors.primary, AppColors.primaryDark],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primary,
-              AppColors.primaryDark,
-            ],
           ),
         ),
         child: SafeArea(
@@ -88,41 +123,42 @@ class _SplashScreenState extends State<SplashScreen>
             children: [
               const Spacer(),
 
-              // Logo with animation
               FadeTransition(
-                opacity: _fadeAnimation,
+                opacity: _fade,
                 child: ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: _buildLogo(),
+                  scale: _scale,
+                  child: _logo(),
                 ),
               ),
 
               const SizedBox(height: 30),
 
-              // App name
               FadeTransition(
-                opacity: _fadeAnimation,
-                child: _buildAppName(),
+                opacity: _fade,
+                child: const Text(
+                  AppStrings.appName,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
 
               const SizedBox(height: 10),
 
-              // Tagline
               FadeTransition(
-                opacity: _fadeAnimation,
-                child: _buildTagline(),
+                opacity: _fade,
+                child: const Text(
+                  AppStrings.appTagline,
+                  style: TextStyle(color: Colors.white70),
+                ),
               ),
 
               const SizedBox(height: 40),
 
-              // Loading indicator (center aligned)
-              const SizedBox(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
+              const CircularProgressIndicator(
+                color: Colors.white,
               ),
 
               const Spacer(),
@@ -133,88 +169,18 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Widget _buildLogo() {
+  Widget _logo() {
     return Container(
       width: 140,
       height: 140,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
       ),
-      child: Center(
-        child: ClipOval(
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset(
-              'assets/images/logo.png',
-              width: 100,
-              height: 100,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                // Fallback to icon if image not found
-                return Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.medication_rounded,
-                    size: 60,
-                    color: AppColors.primary,
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppName() {
-    return const Text(
-      AppStrings.appName,
-      style: TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        letterSpacing: 1.5,
-      ),
-    );
-  }
-
-  Widget _buildTagline() {
-    return const Text(
-      AppStrings.appTagline,
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 16,
-        color: Colors.white70,
-        letterSpacing: 0.5,
-      ),
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return const SizedBox(
-      width: 30,
-      height: 30,
-      child: CircularProgressIndicator(
-        strokeWidth: 3,
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      child: const Icon(
+        Icons.medication,
+        size: 60,
+        color: AppColors.primary,
       ),
     );
   }

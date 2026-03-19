@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+
+      // ✅ Global font
+      fontFamily: 'Poppins',
+
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.accent,
@@ -16,42 +19,43 @@ class AppTheme {
 
       scaffoldBackgroundColor: AppColors.background,
 
-      // Text Theme
-      textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-        headlineLarge: GoogleFonts.poppins(
+      // ✅ Text Theme
+      textTheme: const TextTheme(
+        headlineLarge: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),
-        headlineMedium: GoogleFonts.poppins(
+        headlineMedium: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
-        bodyLarge: GoogleFonts.poppins(
+        bodyLarge: TextStyle(
           fontSize: 16,
           color: AppColors.textPrimary,
         ),
-        bodyMedium: GoogleFonts.poppins(
+        bodyMedium: TextStyle(
           fontSize: 14,
           color: AppColors.textSecondary,
         ),
       ),
 
-      // AppBar Theme
-      appBarTheme: AppBarTheme(
+      // ✅ FIXED AppBar Theme (NO WHITE BACKGROUND)
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.poppins(
+        surfaceTintColor: Colors.transparent, // 🔥 important fix
+        titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
       ),
 
-      // Card Theme
+      // ✅ Card Theme
       cardTheme: CardThemeData(
         color: AppColors.cardBackground,
         elevation: 2,
@@ -60,7 +64,7 @@ class AppTheme {
         ),
       ),
 
-      // Elevated Button Theme
+      // ✅ Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -69,14 +73,14 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
 
-      // Input Decoration Theme
+      // ✅ Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
@@ -92,12 +96,16 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.primary, width: 2),
         ),
-        labelStyle: GoogleFonts.poppins(color: AppColors.textSecondary),
-        hintStyle: GoogleFonts.poppins(color: AppColors.textHint),
+        labelStyle: const TextStyle(
+          color: AppColors.textSecondary,
+        ),
+        hintStyle: const TextStyle(
+          color: AppColors.textHint,
+        ),
       ),
 
-      // Floating Action Button Theme
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
+      // ✅ FAB Theme
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
